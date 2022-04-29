@@ -2,7 +2,7 @@
   "name": "flutter-clean-mvvm-ddd",
   "displayName": "Flutter Feature Scaffolding",
   "description": "Add new feature easily with well structured directories (Clean Architecture pattern)",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "publisher": "TheFabbius",
   "repository": {
     "type": "git",
@@ -35,26 +35,26 @@
     "commands": [
       {
         "command": "extension.new-feature-all",
-        "title": "New Feature - All Layers",
-        "category": "Flutter Clean MVVM DDD: ",
+        "title": "New Feature w/ All Layers",
+        "category": "Flutter Clean MVVM DDD",
         "icon": "assets/logo.png"
       },
       {
         "command": "extension.new-feature-data",
-        "title": "New Feature - Data Layer",
-        "category": "Flutter Clean MVVM DDD: ",
+        "title": "New Feature w/ Data Layer",
+        "category": "Flutter Clean MVVM DDD",
         "icon": "assets/logo.png"
       },
       {
         "command": "extension.new-feature-domain",
-        "title": "New Feature - Domain Layer",
-        "category": "Flutter Clean MVVM DDD: ",
+        "title": "New Feature w/ Domain Layer",
+        "category": "Flutter Clean MVVM DDD",
         "icon": "assets/logo.png"
       },
       {
         "command": "extension.new-feature-presentation",
-        "title": "New Feature - Presentation Layer",
-        "category": "Flutter Clean MVVM DDD: ",
+        "title": "New Feature w/ Presentation Layer",
+        "category": "Flutter Clean MVVM DDD",
         "icon": "assets/logo.png"
       }
     ],
@@ -62,22 +62,22 @@
       "explorer/context": [
         {
           "command": "extension.new-feature-all",
-          "group": "cleanArchitectureGroup@1",
+          "group": "flutterCMDGroup@1",
           "when": "explorerResourceIsFolder"
         },
         {
           "command": "extension.new-feature-data",
-          "group": "cleanArchitectureGroup@2",
+          "group": "flutterCMDGroup@2",
           "when": "explorerResourceIsFolder"
         },
         {
           "command": "extension.new-feature-domain",
-          "group": "cleanArchitectureGroup@3",
+          "group": "flutterCMDGroup@3",
           "when": "explorerResourceIsFolder"
         },
         {
           "command": "extension.new-feature-presentation",
-          "group": "cleanArchitectureGroup@4",
+          "group": "flutterCMDGroup@4",
           "when": "explorerResourceIsFolder"
         }
       ]

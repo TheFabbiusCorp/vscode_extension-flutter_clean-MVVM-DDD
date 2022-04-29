@@ -12,7 +12,7 @@ import {
   workspace,
   window,
 } from "vscode";
-import { existsSync, lstatSync, writeFile, appendFile } from "fs";
+import { existsSync, lstatSync } from "fs";
 import { analyzeDependencies } from "./utils";
 
 enum Layer {
