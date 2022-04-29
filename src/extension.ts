@@ -57,7 +57,9 @@ export async function Go (uri: Uri, layer: Layer) {
   try {
     targetDirectory = await getTargetDirectory(uri);
   } catch (error) {
-    window.showErrorMessage(error.message);
+    if (error instanceof Error) {
+      window.showErrorMessage(error.message);
+    }
   }
 
   const pascalCaseFeatureName = changeCase.pascalCase(
@@ -120,11 +122,16 @@ export function isNameValid (featureName: string | undefined): boolean {
 
 export async function getTargetDirectory (uri: Uri): Promise<string> {
   let targetDirectory;
-  if(workspace.workspaceFolders !== undefined) {
-    targetDirectory = workspace.workspaceFolders[0].uri.path;
-  }
-  else {
-    throw Error("There is some problem in fetching current directory from the workspace.")
+
+  if (_.isNil(_.get(uri, "fsPath")) || !lstatSync(uri.fsPath).isDirectory()) {
+    if(workspace.workspaceFolders !== undefined) {
+      targetDirectory = workspace.workspaceFolders[0].uri.path;
+    }
+    else {
+      throw Error("There is some problem in fetching current directory from the workspace.")
+    }
+  } else {
+    targetDirectory = uri.fsPath;
   }
 
   return targetDirectory;
@@ -164,26 +171,13 @@ export async function generateFeatureArchitecture (
   }
 
   // Create the data layer
-  const dataDirectoryPath = path.join(featureDirectoryPath, "data");
-  await createDirectories(dataDirectoryPath, [
-    "adapter",
-    "data_source",
-  ]);
+  await generateFeatureArchitectureData(featureName, targetDirectory);
 
   // Create the domain layer
-  const domainDirectoryPath = path.join(featureDirectoryPath, "domain");
-  await createDirectories(domainDirectoryPath, [
-    "contracts",
-    "models",
-  ]);
+  await generateFeatureArchitectureDomain(featureName, targetDirectory);
 
   // Create the presentation layer
-  const presentationDirectoryPath = path.join(featureDirectoryPath,"presentation");
-  await createDirectories(presentationDirectoryPath, [
-    "models",
-    "view",
-    "view_models",
-  ]);
+  await generateFeatureArchitecturePresentation(featureName, targetDirectory);
 }
 
 export async function generateFeatureArchitectureData (
@@ -197,10 +191,26 @@ export async function generateFeatureArchitectureData (
   }
 
   // Create the data layer
-  const dataDirectoryPath = path.join(featureDirectoryPath, "data");
-  await createDirectories(dataDirectoryPath, [
-    "adapter",
-    "data_source",
+  const dataLayerPath = path.join(featureDirectoryPath, "data");
+  const dataLayerAdapterPath = path.join(dataLayerPath, "adapter");
+  await createDirectories(dataLayerAdapterPath, [
+    "repositories",
+  ]);
+  const dataLayerAdapterContractsPath = path.join(dataLayerAdapterPath, "contracts");
+  await createDirectories(dataLayerAdapterContractsPath, [
+    "local",
+    "remote",
+  ]);
+  const dataLayerAdapterModelsPath = path.join(dataLayerAdapterPath, "models");
+  await createDirectories(dataLayerAdapterModelsPath, [
+    "local",
+    "remote",
+  ]);
+
+  const dataLayerDSPath = path.join(dataLayerPath, "data_source");
+  await createDirectories(dataLayerDSPath, [
+    "local",
+    "remote",
   ]);
 }
 
@@ -215,11 +225,19 @@ export async function generateFeatureArchitectureDomain (
   }
 
   // Create the domain layer
-  const domainDirectoryPath = path.join(featureDirectoryPath, "domain");
-  await createDirectories(domainDirectoryPath, [
+  const domainLayerPath = path.join(featureDirectoryPath, "domain");
+  await createDirectories(domainLayerPath, [
     "contracts",
-    "models",
   ]);
+  const domainLayerAdapterModelsPath = path.join(domainLayerPath, "models");
+  await createDirectories(domainLayerAdapterModelsPath, [
+    "aggregators",
+    "entities",
+    "failures",
+    "validators",
+    "value_objects",
+  ]);
+
 }
 
 export async function generateFeatureArchitecturePresentation (
@@ -267,7 +285,8 @@ export async function createDirectories (
 ): Promise<void> {
   // Create the parent directory
   await createDirectory(targetDirectory);
-  // Creat the children
+
+  // Create the children
   childDirectories.map(
     async (directory) =>
       await createDirectory(path.join(targetDirectory, directory))
